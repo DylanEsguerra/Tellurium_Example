@@ -1,0 +1,11 @@
+# Tellurium and its core dependencies
+tellurium>=2.2.0
+
+# Additional useful packages for data analysis and visualization
+numpy>=1.19.0
+matplotlib>=3.3.0
+pandas>=1.3.0
+
+# Jupyter notebook support (optional but useful for interactive work)
+jupyter>=1.0.0
+ipykernel>=6.0.0
