@@ -1,0 +1,79 @@
+// Created by libAntimony v2.15.0
+model *Aldea_Model()
+
+  // Compartments and Species:
+  compartment absorption_site, central, peripheral, local_amyloid, VWD_compartment;
+  species C in central, Cp in peripheral;
+  substanceOnly species A in absorption_site, A_beta in local_amyloid, VWD in VWD_compartment;
+  substanceOnly species $BGTS in VWD_compartment;
+
+  // Assignment Rules:
+  BGTS := BGTS_max*(VWD/EG50)^pow_/(1 + (VWD/EG50)^pow_);
+  Dsc := piecewise(450, (time >= 0) && (time < (0 + D1)), 450, (time >= 32) && (time < (32 + D1)), 900, (time >= 56) && (time < (56 + D1)), 900, (time >= 84) && (time < (84 + D1)), 1200, (time >= 102) && (time < (102 + D1)), 1200, (time >= 140) && (time < (140 + D1)), 1200, (time >= 280) && (time < (280 + D1)), 1200, (time >= 309) && (time < (309 + D1)), 1200, (time >= 336) && (time < (336 + D1)), 1200, (time >= 365) && (time < (365 + D1)), 1200, (time >= 420) && (time < (420 + D1)), 1200, (time >= 455) && (time < (455 + D1)), 1200, (time >= 483) && (time < (483 + D1)), 1200, (time >= 504) && (time < (504 + D1)), 1200, (time >= 529) && (time < (529 + D1)), 1200, (time >= 560) && (time < (560 + D1)), 1200, (time >= 588) && (time < (588 + D1)), 1200, (time >= 616) && (time < (616 + D1)), 1200, (time >= 644) && (time < (644 + D1)), 1200, (time >= 675) && (time < (675 + D1)), 1200, (time >= 703) && (time < (703 + D1)), 0);
+  Div := piecewise(0, (time >= 0) && (time < (0 + 0.001)), 0, (time >= 28) && (time < (28 + 0.001)), 0, (time >= 56) && (time < (56 + 0.001)), 0, (time >= 84) && (time < (84 + 0.001)), 0, (time >= 112) && (time < (112 + 0.001)), 0, (time >= 140) && (time < (140 + 0.001)), 0, (time >= 168) && (time < (168 + 0.001)), 0, (time >= 196) && (time < (196 + 0.001)), 0, (time >= 224) && (time < (224 + 0.001)), 0, (time >= 252) && (time < (252 + 0.001)), 0, (time >= 280) && (time < (280 + 0.001)), 0, (time >= 308) && (time < (308 + 0.001)), 0, (time >= 336) && (time < (336 + 0.001)), 0, (time >= 364) && (time < (364 + 0.001)), 0, (time >= 392) && (time < (392 + 0.001)), 0, (time >= 420) && (time < (420 + 0.001)), 0, (time >= 448) && (time < (448 + 0.001)), 0, (time >= 476) && (time < (476 + 0.001)), 0, (time >= 504) && (time < (504 + 0.001)), 0, (time >= 532) && (time < (532 + 0.001)), 0, (time >= 560) && (time < (560 + 0.001)), 0, (time >= 588) && (time < (588 + 0.001)), 0, (time >= 616) && (time < (616 + 0.001)), 0, (time >= 644) && (time < (644 + 0.001)), 0, (time >= 672) && (time < (672 + 0.001)), 0, (time >= 700) && (time < (700 + 0.001)), 0, (time >= 728) && (time < (728 + 0.001)), 0, (time >= 756) && (time < (756 + 0.001)), 0, (time >= 784) && (time < (784 + 0.001)), 0, (time >= 812) && (time < (812 + 0.001)), 0, (time >= 840) && (time < (840 + 0.001)), 0);
+
+  // Reactions:
+  absorption: A => C; KA*A;
+  sc_dosing:  => A; F*Dsc/D1;
+  iv_dosing:  => C; Div;
+  central_to_peripheral: C => Cp; Q*C;
+  peripheral_to_central: Cp => C; Q*Cp;
+  elimination: C => ; CL*C;
+  amyloid_degradation: A_beta => VWD; alpha_removal*C*A_beta;
+  vwd_degradation: VWD => ; k_repair*VWD;
+
+  // Species initializations:
+  A = 0;
+  A has milligram_per_litre;
+  C = 0;
+  C has milligram_per_litre;
+  Cp = 0;
+  Cp has milligram_per_litre;
+  A_beta = A_beta0;
+  A_beta has dimensionless_per_dimensionles;
+  VWD = 0;
+  VWD has dimensionless_per_dimensionles;
+
+  // Compartment initializations:
+  absorption_site = 1;
+  absorption_site has litre;
+  central = 3.52;
+  central has litre;
+  peripheral = 6.38;
+  peripheral has litre;
+  local_amyloid = 1;
+  local_amyloid has dimensionless;
+  VWD_compartment = 1;
+  VWD_compartment has dimensionless;
+
+  // Variable initializations:
+  BGTS_max = 60;
+  EG50 = 1;
+  pow_ = 3.71652;
+  F = 0.494;
+  D1 = 0.0821;
+  KA = 0.22;
+  CL = 0.336;
+  Vc = 3.52;
+  Q = 0.869;
+  Vp = 6.38;
+  Dsc has milligram;
+  Div has milligram;
+  alpha_removal = 0.000113672;
+  k_repair = 0.014955;
+  A_beta0 = 2.81348;
+  VWD0 = 0;
+
+  // Other declarations:
+  var Dsc, Div;
+  const absorption_site, central, peripheral, local_amyloid, VWD_compartment;
+  const BGTS_max, EG50, pow_, F, D1, KA, CL, Vc, Q, Vp, alpha_removal, k_repair;
+  const A_beta0, VWD0;
+
+  // Unit definitions:
+  unit day = 86400 second;
+  unit milligram = 1e-3 gram;
+  unit milligram_per_litre = 1e-3 gram / litre;
+  unit time_unit = day;
+  unit dimensionless_per_dimensionles = dimensionless / dimensionless;
+end
