@@ -142,6 +142,20 @@ Creating a branch is like creating your own copy of the project to experiment wi
 
 ### Step-by-Step Guide to Pushing Your Changes
 
+#### Step 0: Pull the Latest Changes First
+
+**IMPORTANT:** Before starting any work, make sure you have the latest version of the repository. If you cloned the repository earlier, new changes may have been added since then.
+
+```bash
+# Make sure you're on the main branch
+git checkout main
+
+# Pull the latest changes from GitHub
+git pull origin main
+```
+
+This ensures you're starting from the most up-to-date version and helps avoid conflicts when you push your changes later.
+
 #### Step 1: Check Your Current Status
 
 Before making any changes, check what branch you're on and what files have been modified:
